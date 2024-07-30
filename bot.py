@@ -50,12 +50,12 @@ def start_game(message: telebot.types.Message):
     im2 = im2.rotate(90)
     bio = BytesIO()
     bio.name = 'image.jpeg'
-    logger.info(f"name of image: {im.filename}")
+    logger.info(f"name of image: {(im.filename.split('\\')[-1]).split('.')[0]}")
     im2.save(bio, 'JPEG')
     bio.seek(0)
     bot.send_photo(chat_id, photo=bio)
 
-    bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'))
+    # bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'))
 
 
 
@@ -88,7 +88,7 @@ def request_hint(message: telebot.types.Message):
     if not game_session:
         bot.send_message(chat_id, "there has to be an ongoing game to use this command")
         return
-    bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'), caption="there is your hint")
+    # bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'), caption="there is your hint")
 
 
 @bot.message_handler(func=lambda message: True)
