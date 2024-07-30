@@ -2,6 +2,8 @@ import logging
 from pathlib import Path
 from io import BytesIO
 import random
+from db import GuessPictureDB
+
 
 from PIL import Image
 import PIL
@@ -18,6 +20,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(bot_secrets.BOT_TOKEN)
+guesser = GuessPictureDB()
 
 
 @bot.message_handler(commands=['help'])
@@ -50,7 +53,9 @@ def start_game(message: telebot.types.Message):
     im2 = im2.rotate(90)
     bio = BytesIO()
     bio.name = 'image.jpeg'
-    logger.info(f"name of image: {(im.filename.split('\\')[-1]).split('.')[0]}")
+    photo_name = (im.filename.split('\\')[-1]).split('.')[0]
+    guesser.add_chat(chat_id, photo_name)
+    logger.info(f"name of image: {photo_name}")
     im2.save(bio, 'JPEG')
     bio.seek(0)
     bot.send_photo(chat_id, photo=bio)
@@ -62,10 +67,15 @@ def start_game(message: telebot.types.Message):
 @bot.message_handler(commands=['guess'])
 def check_guess(message: telebot.types.Message):
     chat_id = message.chat.id
-    guess = message.text
+    guess = " ".join(message.text.split(' ')[1:])
     guesser_id = message.from_user.id
     guesser_first_name = message.from_user.first_name
-
+    correct_name = guesser.get_name(chat_id)
+    if correct_name is None:
+        logger.error("There is no pictures")
+        return
+    if correct_name == guess:
+        logger.info("correct")
     # player = get_player(guesser_id)
     # image = session(chat_id).get_image()
     # if image.check_guess(guess):
@@ -76,7 +86,6 @@ def check_guess(message: telebot.types.Message):
     #     # no updates, once time is up then goes to next hint
 
     logger.info(f"the guess is: {guess}, it was made by: {guesser_first_name}")
-
     logger.info(message.from_user)
     bot.send_message(chat_id, f"i dont know whether its correct or not, thank you {guesser_first_name}")
 
