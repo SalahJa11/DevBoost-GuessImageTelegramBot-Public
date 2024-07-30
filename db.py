@@ -1,10 +1,7 @@
 import os
 import random
-from pymongo import MongoClient
-import telebot
-from bot_secrets import BOT_TOKEN
 
-bot = telebot.TeleBot(BOT_TOKEN)
+from pymongo import MongoClient
 
 
 class GuessPictureDB:
@@ -14,10 +11,20 @@ class GuessPictureDB:
         self.chat = self.db.get_collection("chat")
         self.pictures = self.db.get_collection("Pictures")
 
-    def add_chat(self, chat_id: str, right_name: dict):
-        self.chat.update_one(
-            {"chat_id": chat_id}, {"$push": {"right_name": right_name}}, upsert=True
-        )
+        # self.lists.create_index("chat_id", unique=True)
+
+    def add_chat(self, chat_id, right_name):
+        self.chat.update_one({'chat_id': chat_id}, {
+            '$set': {'right_name': right_name}
+        }, upsert=True)
+
+
+    def get_name(self, chat_id):
+        ret = self.chat.find_one({'chat_id': chat_id})
+        return ret["right_name"] if ret is not None else None
+
+
+
 
     def get_random_picture_path(self, folder_dir: str) -> str:
         picture_files = [
@@ -30,4 +37,15 @@ class GuessPictureDB:
         )
 
 
-PICTURES_DIR = "/Users/kateryna/PycharmProjects/devboost1-telegram-bot-hackathon-cute-pandas/pictures"
+# PICTURES_DIR = "/Users/kateryna/PycharmProjects/devboost1-telegram-bot-hackathon-cute-pandas/pictures"
+
+
+if __name__ == '__main__':
+    folder_dir = "pictures"
+    guesser = GuessPictureDB()
+    for img in os.listdir(folder_dir):
+        print(img)
+
+
+
+    guesser.add_chat("", 'cat')
