@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5d1dccbf-1de4-497c-a65b-9c1b5c23bacb" name="Changes" comment="ofir updates">
-      <change beforePath="$PROJECT_DIR$/cutepandas/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/cutepandas/bot.py" afterDir="false" />
-    </list>
+    <list default="true" id="5d1dccbf-1de4-497c-a65b-9c1b5c23bacb" name="Changes" comment="fixed image factory" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,25 +28,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.bot.executor": "Run",
-    "Python.bot_secrets.executor": "Run",
-    "Python.db.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/adam1/PycharmProjects/devboost1-telegram-bot-hackathon-cute-pandas/image_processing",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "two.files.diff.last.used.folder": "C:/Users/adam1/PycharmProjects/devboost1-telegram-bot-hackathon-cute-pandas/image_processing"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.bot.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bot_secrets.executor&quot;: &quot;Run&quot;,
+    &quot;Python.db.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/adam1/PycharmProjects/devboost1-telegram-bot-hackathon-cute-pandas/image_processing&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;two.files.diff.last.used.folder&quot;: &quot;C:/Users/adam1/PycharmProjects/devboost1-telegram-bot-hackathon-cute-pandas/image_processing&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\adam1\PycharmProjects\devboost1-telegram-bot-hackathon-cute-pandas\cutepandas" />
       <recent name="C:\Users\adam1\PycharmProjects\devboost1-telegram-bot-hackathon-cute-pandas" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.bot">
     <configuration name="bot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="devboost1-telegram-bot-hackathon-cute-pandas" />
       <option name="ENV_FILES" value="" />
@@ -190,6 +188,7 @@
     <MESSAGE value="without kitty" />
     <MESSAGE value="changes on db and bot&#10;adding score and option answers" />
     <MESSAGE value="ofir updates" />
-    <option name="LAST_COMMIT_MESSAGE" value="ofir updates" />
+    <MESSAGE value="fixed image factory" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed image factory" />
   </component>
 </project>
