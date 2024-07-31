@@ -20,10 +20,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(bot_secrets.BOT_TOKEN)
-guesser = GuessPictureDB()
+db_guesser = GuessPictureDB()
 
 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(commands=['help', 'start'])
 def display_help(message: telebot.types.Message):
     chat_id = message.chat.id
     username = message.from_user.username
@@ -44,17 +44,17 @@ To request a hint type /hint
 @bot.message_handler(commands=['play'])
 def start_game(message: telebot.types.Message):
     chat_id = message.chat.id
-
+    user_id = message.from_user.id
     files = list(Path("pictures/").glob("*.jpg"))
     logger.info(f"test: {files}")
-
-    im: PIL.Image = Image.open(random.choice(files))
+    random_image = db_guesser.get_random_image()
+    im: PIL.Image = Image.open(random_image['image_path'])
     im2 = im.resize((200, 200))
-    im2 = im2.rotate(90)
+    # im2 = im2.rotate(90)
     bio = BytesIO()
     bio.name = 'image.jpeg'
     photo_name = (im.filename.split('\\')[-1]).split('.')[0]
-    guesser.add_chat(chat_id, photo_name)
+    db_guesser.add_chat(chat_id, user_id, random_image['image_path'])
     logger.info(f"name of image: {photo_name}")
     im2.save(bio, 'JPEG')
     bio.seek(0)
@@ -63,19 +63,23 @@ def start_game(message: telebot.types.Message):
     # bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'))
 
 
-
 @bot.message_handler(commands=['guess'])
 def check_guess(message: telebot.types.Message):
     chat_id = message.chat.id
     guess = " ".join(message.text.split(' ')[1:])
     guesser_id = message.from_user.id
     guesser_first_name = message.from_user.first_name
-    correct_name = guesser.get_name(chat_id)
-    if correct_name is None:
+    correct_answers = db_guesser.get_name(chat_id)
+    print(correct_answers)
+    if correct_answers is None:
         logger.error("There is no pictures")
         return
-    if correct_name == guess:
-        logger.info("correct")
+    if guess in correct_answers:
+        logger.info("Correct Answer")
+        db_guesser.delete_picture(chat_id, guesser_id)
+        bot.send_message(chat_id, f"Correct Guess, Do you want another picture {guesser_first_name}?")
+        return
+
     # player = get_player(guesser_id)
     # image = session(chat_id).get_image()
     # if image.check_guess(guess):
@@ -87,7 +91,7 @@ def check_guess(message: telebot.types.Message):
 
     logger.info(f"the guess is: {guess}, it was made by: {guesser_first_name}")
     logger.info(message.from_user)
-    bot.send_message(chat_id, f"i dont know whether its correct or not, thank you {guesser_first_name}")
+    bot.send_message(chat_id, f"NOT correct, try again {guesser_first_name}")
 
 @bot.message_handler(commands=['hint'])
 def request_hint(message: telebot.types.Message):

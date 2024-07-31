@@ -1,0 +1,51 @@
+{
+  "pictures/plane.jpg": [
+    "aircraft",
+      "airplane",
+      "jet",
+      "aero",
+      "flying machine",
+      "airliner",
+      "plane"
+    ],
+
+   "pictures/cat.jpg":[
+      "feline",
+      "kitty",
+      "pussycat",
+      "tomcat",
+      "kitten",
+    "slang/colloquial",
+      "tabby",
+      "purr machine",
+      "furball",
+     "cat"
+    ],
+
+  "pictures/flower.jpg": [
+      "blossom",
+      "bloom",
+      "petal",
+      "bud",
+      "inflorescence",
+      "plant",
+      "rose",
+      "bloom",
+      "petal",
+      "floral",
+      "flower"
+    ],
+  "pictures/car.jpeg": [
+      "automobile",
+      "vehicle",
+      "motorcar",
+      "auto",
+      "machine",
+      "car",
+      "public transport"
+
+    ]
+
+}
+
+
