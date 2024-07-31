@@ -13,6 +13,7 @@ pillow = "^10.4.0"
 pymongo = "^4.8.0"
 pytest = "^8.3.2"
 matplotlib = "^3.9.1"
+autocorrect = "^2.6.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"

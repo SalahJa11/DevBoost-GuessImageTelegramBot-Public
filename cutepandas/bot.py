@@ -3,9 +3,7 @@ from pathlib import Path
 
 from cutepandas.image_processing import image_factory
 from db import GuessPictureDB
-from image_processing.blur_image import BlurImage
-from image_processing.shuffle_image import ShuffleImage
-from image_processing.mask_image import MaskImage
+from autocorrect import Speller
 
 import telebot
 from telebot import types
@@ -21,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(bot_secrets.BOT_TOKEN)
 db_guesser = GuessPictureDB()
+spell = Speller(lang='en')
 
 
 @bot.message_handler(commands=['help', 'start'])
@@ -100,9 +99,13 @@ def handle_hint_button(call):
     else:
         bot.send_message(chat_id, "It can't be easier")
         logger.info("it cant be easier")
-    print(call)
+        return
 
     bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
+    keyboard = types.InlineKeyboardMarkup(row_width=1)
+    button1 = types.InlineKeyboardButton("Hint!!", callback_data='hint')
+    keyboard.add(button1)
+    bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
 
 @bot.callback_query_handler(func=lambda call: call.data in "123")
 def handle_callback_query(call):
@@ -137,7 +140,7 @@ def check_guess(message: telebot.types.Message):
     if correct_answers is None:
         logger.error("There is no pictures")
         return
-    if guess in correct_answers:
+    if guess in correct_answers or spell(guess) in correct_answers:
         logger.info("Correct Answer")
         db_guesser.delete_picture(chat_id, guesser_id)
         bot.send_message(chat_id, f"Correct Guess, Do you want another picture, write /play {guesser_first_name}?")
