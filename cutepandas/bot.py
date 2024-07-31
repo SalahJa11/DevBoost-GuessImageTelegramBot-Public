@@ -43,8 +43,7 @@ To request a hint type /hint
 @bot.message_handler(commands=['play'])
 def start_game(message: telebot.types.Message):
     chat_id = message.chat.id
-    # user_id = message.from_user.id
-    # files = list(Path("pictures/").glob("*.jpg"))
+    user_id = message.from_user.id
 
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     button1 = types.InlineKeyboardButton("Blur Image", callback_data= str(image_factory.Images.BLUR_IMAGE.value))
@@ -52,31 +51,14 @@ def start_game(message: telebot.types.Message):
     button3 = types.InlineKeyboardButton("Shuffle Image", callback_data= str(image_factory.Images.SHUFFLE_IMAGE.value))
     keyboard.add(button1, button2, button3)
 
+    # enter the chat to the db
+    db_guesser.add_empty_chat(chat_id, user_id)
+
     bot.send_message(message.chat.id, "choose an option: ", reply_markup=keyboard)
 
-    # logger.info(f"test: {files}")
-    # random_image = db_guesser.get_random_image()
-    # im: PIL.Image = Image.open(random_image['image_path'])
-    # im2 = im.resize((200, 200))
-    # im2 = im2.rotate(90)
-    # bio = BytesIO()
-    # bio.name = 'image.jpeg'
-    # blur_image = BlurImage(random_image['image_path'])
-    # shuffle_image = ShuffleImage(random_image['image_path'])
-    # mask_image = MaskImage(random_image['image_path'])
-    #
-    # db_guesser.add_chat(chat_id, user_id, random_image['image_path'], blur_image.hardness_index, BLUR)
-    # photo_name = (im.filename.split('\\')[-1]).split('.')[0]
-    # logger.info(f"name of image: {photo_name}")
-    # im2.save(bio, 'JPEG')
-    # blur = blur_image(random_image['image_path'])
 
-    # bio.seek(0)
-    # print(blur_image.run_func())
-    # bot.send_photo(chat_id, blur_image.run_func())
-    # bot.send_photo(chat_id, photo=bio)
 
-    # bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'))
+
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "hint")
@@ -107,11 +89,16 @@ def handle_hint_button(call):
     keyboard.add(button1)
     bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
 
-@bot.callback_query_handler(func=lambda call: call.data in "123")
+@bot.callback_query_handler(func=lambda call: call.data in "012")
 def handle_callback_query(call):
     chat_id = call.message.chat.id
     user_id = call.from_user.id
-    random_image = db_guesser.get_random_image()
+
+    current_chat = db_guesser.find_one_chat(chat_id)
+    visited = current_chat["visited"] if "visited" in current_chat else []
+    print(f"visited images: {visited}")
+    random_image = db_guesser.get_random_image(visited)
+    print(f"random image i got is: {random_image}")
 
     choice = int(call.data)
     hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
@@ -123,6 +110,11 @@ def handle_callback_query(call):
     button1 = types.InlineKeyboardButton("Hint!!", callback_data='hint')
     keyboard.add(button1)
     bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
+
+
+
+    visited.append(random_image['image_path'])
+    db_guesser.add_visited_to_chat(chat_id, visited)
 
 
 @bot.message_handler(commands=['guess'])
@@ -144,23 +136,22 @@ def check_guess(message: telebot.types.Message):
         logger.info("Correct Answer")
         db_guesser.delete_picture(chat_id, guesser_id)
         bot.send_message(chat_id, f"Correct Guess, Do you want another picture, write /play {guesser_first_name}?")
-        return
+    else:
+        bot.send_message(chat_id, f"NOT correct, try again {guesser_first_name}, if you need a hint click /hint")
 
-    # player = get_player(guesser_id)
-    # image = session(chat_id).get_image()
-    # if image.check_guess(guess):
-    #     logger.info(f"the guess is correct")
-    #     # update score for this player, advertise correct and end the game session
-    # else:
-    #     logger.info(f"the guess is incorrect")
-    #     # no updates, once time is up then goes to next hint
-
+    bot.send_message(chat_id, f"End Game /end")
     logger.info(f"the guess is: {guess}, it was made by: {guesser_first_name}")
     logger.info(message.from_user)
     # if message.text == 'hint':
     #     return
-    bot.send_message(chat_id, f"NOT correct, try again {guesser_first_name}, if you need a hint click /hint")
 
+@bot.message_handler(commands=['end'])
+def end_game(message: telebot.types.Message):
+    ob = db_guesser.chat.find_one({"chat_id": message.chat.id, "user_id": message.from_user.id})
+    print(f"chat id {message.chat.id}     user id {message.from_user.id}")
+    print(ob)
+    score = ob["score"]
+    bot.send_message(message.chat.id, f"Your score is {score}")
 @bot.message_handler(commands=['hint'])
 def request_hint(message: telebot.types.Message):
     chat_id = message.chat.id
