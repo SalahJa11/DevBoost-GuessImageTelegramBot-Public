@@ -82,7 +82,13 @@ def start_game(message: telebot.types.Message):
 def handle_hint_button(call):
     chat_id = call.message.chat.id
     user_id = call.from_user.id
-    process_hint_request(chat_id, user_id)
+    if process_hint_request(chat_id, user_id):
+        bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
+        keyboard = types.InlineKeyboardMarkup(row_width=1)
+        button1 = types.InlineKeyboardButton("Hint!!", callback_data='hint')
+        keyboard.add(button1)
+        bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
+
     # game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
     #
     # logger.info(game_session)
@@ -99,11 +105,7 @@ def handle_hint_button(call):
     #     logger.info("it cant be easier")
     #     return
 
-    bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
-    keyboard = types.InlineKeyboardMarkup(row_width=1)
-    button1 = types.InlineKeyboardButton("Hint!!", callback_data='hint')
-    keyboard.add(button1)
-    bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
+
 
 @bot.callback_query_handler(func=lambda call: call.data in "012")
 def handle_callback_query(call):
@@ -139,7 +141,7 @@ def check_guess(message: telebot.types.Message):
     guesser_id = message.from_user.id
     guesser_first_name = message.from_user.first_name
 
-    if not check_session(chat_id):
+    if not check_session(db_guesser.find_one_chat(chat_id)):
         return
 
     if message.chat.type == 'private':
@@ -203,14 +205,14 @@ def nothing(message: telebot.types.Message):
 
     logger.info(f"= Got on chat #{chat_id}/{username!r}: {text!r}")
     if message.chat.type == 'private':
-        if message.text == 'play':
+        lower_text = message.text.lower()
+        if lower_text == 'play':
             start_game(message)
-        elif message.text == 'hint':
+        elif lower_text == 'hint':
             request_hint(message)
         else:
             check_guess(message)
-def check_session(chat_id: int):
-    chat_doc = db_guesser.find_one_chat(chat_id)
+def check_session(chat_doc):
     if chat_doc is None:
         logger.error("the chat isn't in the database, probably an error")
         return False
@@ -221,9 +223,9 @@ def process_hint_request(chat_id: int, user_id: int):
 
     current_chat = db_guesser.find_one_chat(chat_id)
     logger.info(current_chat)
-    if (not current_chat) or ("game_session" not in current_chat) or (not current_chat["game_session"]):
-        logger.info("something went wrong with getting the session")
-        return
+    if not check_session(current_chat):
+        logger.info("session doesn't exist or empty")
+        return False
     game_session = current_chat["game_session"]
 
     new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
@@ -236,6 +238,8 @@ def process_hint_request(chat_id: int, user_id: int):
     else:
         bot.send_message(chat_id, "It can't be easier")
         logger.info("it cant be easier")
+
+    return True
 
 
 
