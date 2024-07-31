@@ -27,12 +27,12 @@ class GuessPictureDB:
     def delete_picture(self, chat_id, user_id):
         # self.chat.delete_one({'chat_id': chat_id})
         self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
-                             {'$set': {'game_session': {'image_path': ""}},
+                             {'$set': {'game_session': {}},
             '$inc': {'score': 10}
         }, upsert=True)
 
     def get_name(self, chat_id):
-        ret = self.chat.find_one({'chat_id': chat_id})['image_path']
+        ret = self.chat.find_one({'chat_id': chat_id})['game_session']['image_path']
         return self.pictures.find_one({'image_path': ret})['synonyms'] if ret is not None else None
 
     def add_pictures(self, data_file):
@@ -55,9 +55,9 @@ class GuessPictureDB:
             return item
         return None
 
-    def changes_hardness(self, chat_id, user_id, hardness):
+    def changes_hardness(self, chat_id, user_id, image_path, game_type,hardness):
         self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
-                             {'$set': {'game_session': {'hardness': hardness}}})
+                             {'$set': {'game_session': {'image_path': image_path, 'game_type': game_type,'hardness': hardness}}})
 
 
     # def get_random_picture_path(self, folder_dir: str) -> str:
