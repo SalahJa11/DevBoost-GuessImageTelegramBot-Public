@@ -8,7 +8,7 @@ from image_processing.mask_image import MaskImage
 import telebot
 from telebot import types
 
-from cutepandas import bot_secrets
+import bot_secrets
 
 BLUR = 'blur'
 MASK = 'mask'
