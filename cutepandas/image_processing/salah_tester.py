@@ -10,7 +10,7 @@ if __name__ == '__main__':
         data = json.load(f)
         for pic in data:
             print(pic)
-            test_path = pic.split("/")[1]
+            test_path = pic
             shuffle_image_obj = shuffle_image.ShuffleImage(test_path)
             shuffle_image_test = shuffle_image_obj.run_func()
             plt.imshow(shuffle_image_test)

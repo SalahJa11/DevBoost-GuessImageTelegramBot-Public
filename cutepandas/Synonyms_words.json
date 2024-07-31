@@ -43,9 +43,47 @@
       "machine",
       "car",
       "public transport"
-
+    ],
+  "pictures/bow.jpeg": [
+      "bow",
+      "yellow bow"
+    ],
+  "pictures/jackie_chan.jpeg": [
+      "actor",
+      "jackie chan"
+    ],
+  "pictures/laptop.jpeg": [
+      "laptop",
+      "macbook"
+    ],
+  "pictures/map.jpeg": [
+      "map",
+      "worldmap"
+    ],
+  "pictures/mouse.jpeg": [
+      "mouse",
+      "animal"
+    ],
+  "pictures/mouse2.jpeg": [
+      "mouse",
+      "wired mouse"
+    ],
+  "pictures/panda.jpeg": [
+      "panda",
+      "panda bear"
+    ],
+  "pictures/sunset.jpeg": [
+      "sunset",
+      "evening sun"
+    ],
+  "pictures/train.jpeg": [
+      "train",
+      "transport"
+    ],
+  "pictures/windmill.jpeg": [
+      "windmill",
+      "mill"
     ]
-
 }
 
 

@@ -85,9 +85,6 @@ def handle_callback_query(call):
     chat_id = call.message.chat.id
     user_id = call.from_user.id
     random_image = db_guesser.get_random_image()
-    blur_image = BlurImage(random_image['image_path'])
-    shuffle_image = ShuffleImage(random_image['image_path'])
-    mask_image = MaskImage(random_image['image_path'])
 
     choice = int(call.data)
     hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
