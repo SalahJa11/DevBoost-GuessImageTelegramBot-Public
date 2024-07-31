@@ -127,7 +127,7 @@ def request_hint(message: telebot.types.Message):
     new_obj.hardness_index = game_session["hardness"]
     if new_obj.make_easier():
         new_image = new_obj.run_func()
-        db_guesser.changes_hardness(chat_id, user_id, new_obj.hardness_index)
+        db_guesser.changes_hardness(chat_id, user_id,game_session['image_path'], game_session['game_type'], new_obj.hardness_index)
         bot.send_photo(chat_id, new_image)
     else:
         logger.info("it cant be easier")
