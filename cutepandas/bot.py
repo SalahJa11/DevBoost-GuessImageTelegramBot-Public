@@ -83,8 +83,26 @@ def start_game(message: telebot.types.Message):
 @bot.callback_query_handler(func=lambda call: call.data == "hint")
 def handle_hint_button(call):
     print(f"sadasdas {call}")
-    request_hint(call.message)
-    bot.edit_message_text("Game started", chat_id=call.message.chat_id, message_id=call.message.id, reply_markup=None)
+    # request_hint(call.message)
+    chat_id = call.message.chat.id
+    user_id = call.from_user.id
+    game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
+
+    print(game_session)
+
+    new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
+    new_obj.hardness_index = game_session["hardness"]
+    if new_obj.make_easier():
+        new_image = new_obj.run_func()
+        db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
+                                    new_obj.hardness_index)
+        bot.send_photo(chat_id, new_image)
+    else:
+        bot.send_message(chat_id, "It can't be easier")
+        logger.info("it cant be easier")
+    print(call)
+
+    bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
 
 @bot.callback_query_handler(func=lambda call: call.data in "123")
 def handle_callback_query(call):
@@ -158,14 +176,6 @@ def request_hint(message: telebot.types.Message):
     else:
         bot.send_message(chat_id, "It can't be easier")
         logger.info("it cant be easier")
-
-    # db_guesser.changes_hardness(chat_id, user_id, blur_image.hardness_index)
-
-    # game_session = True
-    # if not game_session:
-    #     bot.send_message(chat_id, "there has to be an ongoing game to use this command")
-    #     return
-    # bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'), caption="there is your hint")
 
 
 @bot.message_handler(func=lambda message: True)
