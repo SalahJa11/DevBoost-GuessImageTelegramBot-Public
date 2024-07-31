@@ -1,5 +1,5 @@
 import random
-from shred_image import ShredImage
+from .shred_image import ShredImage
 from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 

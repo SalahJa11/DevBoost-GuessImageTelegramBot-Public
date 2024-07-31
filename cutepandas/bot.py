@@ -1,14 +1,9 @@
 import logging
 from pathlib import Path
-from io import BytesIO
-import random
 from db import GuessPictureDB
-from blur_image import BlurImage
-from shuffle_image import ShuffleImage
-from mask_image import MaskImage
-
-from PIL import Image
-import PIL
+from image_processing.blur_image import BlurImage
+from image_processing.shuffle_image import ShuffleImage
+from image_processing.mask_image import MaskImage
 
 import telebot
 
@@ -127,7 +122,7 @@ def request_hint(message: telebot.types.Message):
     new_obj.hardness_index = game_session["hardness"]
     if new_obj.make_easier():
         new_image = new_obj.run_func()
-        db_guesser.changes_hardness(chat_id, user_id, new_obj.hardness_index)
+        db_guesser.changes_hardness(chat_id, user_id,game_session['image_path'], game_session['game_type'], new_obj.hardness_index)
         bot.send_photo(chat_id, new_image)
     else:
         logger.info("it cant be easier")
