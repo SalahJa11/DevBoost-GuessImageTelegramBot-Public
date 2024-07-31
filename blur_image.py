@@ -2,20 +2,37 @@ from shred_image import ShredImage
 from PIL import Image, ImageFilter
 import matplotlib.pyplot as plt
 
+'''
+hardness array VVV
+index 0 = very-easy
+index 1 = easy
+index 2 = medium
+index 3 = hard
+hardness array AAA
+'''
 
 class BlurImage(ShredImage):
-    def __init__(self, img):
+    def __init__(self, image_path):
         # self.hardness = [7, 5, 3, 2]
-        self.hardness = {"hard": 70, "medium": 45, "easy": 25, "very-easy": 14}
-        self.image = img
+        self.hardness = [14, 25, 45, 70]
+        self.hardness_index = len(self.hardness) - 1
+        self.image = self.importing_image(image_path)
 
-    def run_func(self, hardness="hard"):
-        img = Image.open("python_img.png")
-        blurred_img = img.filter(ImageFilter.GaussianBlur(radius=self.hardness[hardness]))
-        # plt.imshow(blurred_img)
-        # plt.show()
+    def run_func(self):
+        blurred_img = self.image.filter(ImageFilter.GaussianBlur(radius=self.hardness[self.hardness_index]))
         return blurred_img
-
+    def make_easier(self):
+        if self.hardness_index > 0:
+            self.hardness_index -= 1
+            return True
+        return False
     # def simplify_func(self,) -> dict:
 if __name__ == '__main__':
-    BlurImage(None).run_func(hardness="hard")
+    test = BlurImage("python_img.png")
+    test_image = test.run_func()
+    plt.imshow(test_image)
+    plt.show()
+    test.make_easier()
+    test_image = test.run_func()
+    plt.imshow(test_image)
+    plt.show()

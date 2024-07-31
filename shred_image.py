@@ -4,20 +4,41 @@
 # import mask_image
 # import shuftle_image
 # import numpy as np
-class ShredImage:
-    def run_func(self, hardness) -> str:
-        """Load in the file for extracting text."""
-        pass
-    '''TODO
-    def importing_image(path:str):
-        try:
-        "importing ann opening instruction"
-        except :
-    '''
+from PIL import Image
 
-    # def simplify_func(self, full_file_name: str) -> dict:
-    #     """Extract text from the currently loaded file."""
-    #     pass
+pwd_path = "/Users/saldevfree/PycharmProjects/pythonProject/devboost1-telegram-bot-hackathon-cute-pandas/"
+
+
+class ShredImage:
+    def importing_image(self, image_path: str) -> Image:
+        global pwd_path
+        try:
+            print(image_path)
+            test = Image.open(image_path)
+            print("after")
+            return test
+        except FileNotFoundError:
+            edited_path = pwd_path + image_path
+            try:
+                print(image_path)
+                test = Image.open(edited_path)
+                print("after")
+                return test
+            except:
+                pass
+
+    '''TODO
+        def importing_image(path:str):
+            try:
+            "importing ann opening instruction"
+            except :
+        '''
+
+    def run_func(self) -> str:
+        pass
+
+    def make_easier(self):
+        pass
 
 # if __name__ == '__main__':
 #     test_path = "python_img.png"
