@@ -82,21 +82,22 @@ def start_game(message: telebot.types.Message):
 def handle_hint_button(call):
     chat_id = call.message.chat.id
     user_id = call.from_user.id
-    game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
-
-    logger.info(game_session)
-
-    new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
-    new_obj.hardness_index = game_session["hardness"]
-    if new_obj.make_easier():
-        new_image = new_obj.run_func()
-        db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
-                                    new_obj.hardness_index)
-        bot.send_photo(chat_id, new_image)
-    else:
-        bot.send_message(chat_id, "It can't be easier")
-        logger.info("it cant be easier")
-        return
+    process_hint_request(chat_id, user_id)
+    # game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
+    #
+    # logger.info(game_session)
+    #
+    # new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
+    # new_obj.hardness_index = game_session["hardness"]
+    # if new_obj.make_easier():
+    #     new_image = new_obj.run_func()
+    #     db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
+    #                                 new_obj.hardness_index)
+    #     bot.send_photo(chat_id, new_image)
+    # else:
+    #     bot.send_message(chat_id, "It can't be easier")
+    #     logger.info("it cant be easier")
+    #     return
 
     bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
     keyboard = types.InlineKeyboardMarkup(row_width=1)
@@ -176,20 +177,22 @@ def end_game(message: telebot.types.Message):
 def request_hint(message: telebot.types.Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
-    game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
 
-    print(game_session)
-
-    new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
-    new_obj.hardness_index = game_session["hardness"]
-    if new_obj.make_easier():
-        new_image = new_obj.run_func()
-        db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
-                                    new_obj.hardness_index)
-        bot.send_photo(chat_id, new_image)
-    else:
-        bot.send_message(chat_id, "It can't be easier")
-        logger.info("it cant be easier")
+    process_hint_request(chat_id, user_id)
+    # game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
+    #
+    # print(game_session)
+    #
+    # new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
+    # new_obj.hardness_index = game_session["hardness"]
+    # if new_obj.make_easier():
+    #     new_image = new_obj.run_func()
+    #     db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
+    #                                 new_obj.hardness_index)
+    #     bot.send_photo(chat_id, new_image)
+    # else:
+    #     bot.send_message(chat_id, "It can't be easier")
+    #     logger.info("it cant be easier")
 
 
 @bot.message_handler(func=lambda message: True)
@@ -213,6 +216,27 @@ def check_session(chat_id: int):
         return False
     session = chat_doc["game_session"] if "game_session" in chat_doc else {}
     return session
+
+def process_hint_request(chat_id: int, user_id: int):
+
+    current_chat = db_guesser.find_one_chat(chat_id)
+    logger.info(current_chat)
+    if (not current_chat) or ("game_session" not in current_chat) or (not current_chat["game_session"]):
+        logger.info("something went wrong with getting the session")
+        return
+    game_session = current_chat["game_session"]
+
+    new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
+    new_obj.hardness_index = game_session["hardness"]
+    if new_obj.make_easier():
+        new_image = new_obj.run_func()
+        db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
+                                    new_obj.hardness_index)
+        bot.send_photo(chat_id, new_image)
+    else:
+        bot.send_message(chat_id, "It can't be easier")
+        logger.info("it cant be easier")
+
 
 
 logger.info("* Start polling...")
