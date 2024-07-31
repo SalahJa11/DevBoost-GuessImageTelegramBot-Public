@@ -3,9 +3,9 @@ from pathlib import Path
 from io import BytesIO
 import random
 from db import GuessPictureDB
-from blur_image import BlurImage
-from shuffle_image import ShuffleImage
-from mask_image import MaskImage
+from image_processing.blur_image import BlurImage
+from image_processing.shuffle_image import ShuffleImage
+from image_processing.mask_image import MaskImage
 
 from PIL import Image
 import PIL
