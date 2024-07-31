@@ -38,7 +38,7 @@ class GuessPictureDB:
     #  that related to photo
     def delete_picture(self, chat_id, user_id):
         # self.chat.delete_one({'chat_id': chat_id})
-        self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
+        self.chat.update_many({'chat_id': chat_id},
                              {'$set': {'game_session': {}, },
             '$inc': {'score': 10}
         }, upsert=True)

@@ -1,5 +1,5 @@
 import logging
-from pathlib import Path
+import random
 
 from cutepandas.image_processing import image_factory
 from db import GuessPictureDB
@@ -45,16 +45,33 @@ def start_game(message: telebot.types.Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
-    keyboard = types.InlineKeyboardMarkup(row_width=1)
-    button1 = types.InlineKeyboardButton("Blur Image", callback_data= str(image_factory.Images.BLUR_IMAGE.value))
-    button2 = types.InlineKeyboardButton("Mask Image", callback_data= str(image_factory.Images.MASK_IMAGE.value))
-    button3 = types.InlineKeyboardButton("Shuffle Image", callback_data= str(image_factory.Images.SHUFFLE_IMAGE.value))
-    keyboard.add(button1, button2, button3)
-
     # enter the chat to the db
     db_guesser.add_empty_chat(chat_id, user_id)
 
-    bot.send_message(message.chat.id, "choose an option: ", reply_markup=keyboard)
+    if message.chat.type == 'private':
+        keyboard = types.InlineKeyboardMarkup(row_width=1)
+        button1 = types.InlineKeyboardButton("Blur Image", callback_data= str(image_factory.Images.BLUR_IMAGE.value))
+        button2 = types.InlineKeyboardButton("Mask Image", callback_data= str(image_factory.Images.MASK_IMAGE.value))
+        button3 = types.InlineKeyboardButton("Shuffle Image", callback_data= str(image_factory.Images.SHUFFLE_IMAGE.value))
+        keyboard.add(button1, button2, button3)
+
+        bot.send_message(message.chat.id, "choose an option: ", reply_markup=keyboard)
+
+    else:
+        current_chat = db_guesser.find_one_chat(chat_id)
+        visited = current_chat["visited"] if "visited" in current_chat else []
+        print(f"visited images: {visited}")
+        random_image = db_guesser.get_random_image(visited)
+        print(f"random image i got is: {random_image}")
+
+        visited.append(random_image['image_path'])
+        db_guesser.add_visited_to_chat(chat_id, visited)
+
+        choice = random.randint(0,2)
+        hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
+        db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
+        bot.send_photo(chat_id, hidden_image.run_func(), caption="Guess the image!")
+
 
 
 
@@ -63,13 +80,11 @@ def start_game(message: telebot.types.Message):
 
 @bot.callback_query_handler(func=lambda call: call.data == "hint")
 def handle_hint_button(call):
-    print(f"sadasdas {call}")
-    # request_hint(call.message)
     chat_id = call.message.chat.id
     user_id = call.from_user.id
     game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
 
-    print(game_session)
+    logger.info(game_session)
 
     new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
     new_obj.hardness_index = game_session["hardness"]
@@ -119,14 +134,19 @@ def handle_callback_query(call):
 
 @bot.message_handler(commands=['guess'])
 def check_guess(message: telebot.types.Message):
+    chat_id = message.chat.id
+    guesser_id = message.from_user.id
+    guesser_first_name = message.from_user.first_name
+
+    if not check_session(chat_id):
+        return
+
     if message.chat.type == 'private':
         guess = message.text
     else:
         guess = " ".join(message.text.split(' ')[1:])
+    guess = guess.lower()
 
-    chat_id = message.chat.id
-    guesser_id = message.from_user.id
-    guesser_first_name = message.from_user.first_name
     correct_answers = db_guesser.get_name(chat_id)
     print(correct_answers)
     if correct_answers is None:
@@ -186,6 +206,14 @@ def nothing(message: telebot.types.Message):
             request_hint(message)
         else:
             check_guess(message)
+def check_session(chat_id: int):
+    chat_doc = db_guesser.find_one_chat(chat_id)
+    if chat_doc is None:
+        logger.error("the chat isn't in the database, probably an error")
+        return False
+    session = chat_doc["game_session"] if "game_session" in chat_doc else {}
+    return session
+
 
 logger.info("* Start polling...")
 bot.infinity_polling()
