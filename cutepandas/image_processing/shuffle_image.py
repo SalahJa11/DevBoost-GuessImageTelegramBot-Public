@@ -3,7 +3,7 @@ import random
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from image_processing.shred_image import ShredImage
+from .shred_image import ShredImage
 
 '''
 hardness array VVV

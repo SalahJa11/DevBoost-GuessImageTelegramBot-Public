@@ -1,4 +1,4 @@
-from image_processing.shred_image import ShredImage
+from .shred_image import ShredImage
 from PIL import Image, ImageFilter
 import matplotlib.pyplot as plt
 

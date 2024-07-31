@@ -9,8 +9,8 @@ from PIL import Image
 import os
 import sys
 # Get the parent directory
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-sys.path.insert(0, parent_dir)
+# parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+# sys.path.insert(0, parent_dir)
 
 class ShredImage:
     def importing_image(self, image_path: str) -> Image:

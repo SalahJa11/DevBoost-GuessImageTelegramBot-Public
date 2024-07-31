@@ -1,14 +1,9 @@
 import logging
 from pathlib import Path
-from io import BytesIO
-import random
 from db import GuessPictureDB
 from image_processing.blur_image import BlurImage
 from image_processing.shuffle_image import ShuffleImage
 from image_processing.mask_image import MaskImage
-
-from PIL import Image
-import PIL
 
 import telebot
 
