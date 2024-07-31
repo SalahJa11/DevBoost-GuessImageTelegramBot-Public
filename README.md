@@ -1,25 +1,28 @@
-# 🚧 YOUR BOT NAME HERE
+# 🚀 Guess image game bot
 
 ## The Team
-- 🚧 Participant 1 Name
-- 🚧 Participant 2 Name
-- 🚧 Participant 3 Name
+- 💡 Ofir
+- 💡 Adam
+- 💡 Salah
+- 💡 Kateryna
 
-## About this bot
+## About guess image game bot
 
-🚧 ENTER DESCRIPTION HERE
+This bot allows you to play game 🤖.
+The purpose of the game is to guess object on the displayed picture.
+The difficulty is that the picture is shown either partially or in low quality, so that guessing is more interesting.
+If the player guesses correctly, he wins and earns a plus to his player rating.
+It is possible to choose the difficulty of the game.
 
-🚧 YOU CAN ADD A t.me LINK TO THE BOT HERE
+🔗 Here is the link to add bot: @devBoost_Kate_bot
 
-🚧 ADD SCREENSHOTS/GIFS/SCREENCAST HERE (REFER TO MARKDOWN'S SYNTAX FOR HELP ON DISPLAYING IMAGES)
+You can play alone or to add this bot to your group and play with friends. Just need to make it admin. 
 
-🚧 ADD ANY OTHER NOTES REGARDING THE BOT
- 
 ## Instructions for Developers 
 ### Prerequisites
-- Python 3.11
+- Python 3.12
 - Poetry
-- 🚧 ADD ANY OTHER PREREQUISITE HERE (MONGODB?)
+- MongoDB
 
 ### Setup
 - git clone this repository 
@@ -33,6 +36,11 @@
 - Create a `bot_settings.py` file with your bot token:
 
       BOT_TOKEN = 'xxxxxxx'
+
+### Running tests        
+
+      poetry run pytest
+
 
 ### Running the bot        
 - Run the bot:

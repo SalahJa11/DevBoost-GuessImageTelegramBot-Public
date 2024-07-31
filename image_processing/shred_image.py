@@ -4,27 +4,26 @@
 # import mask_image
 # import shuftle_image
 # import numpy as np
+import os
 from PIL import Image
-
-pwd_path = "/Users/saldevfree/PycharmProjects/pythonProject/devboost1-telegram-bot-hackathon-cute-pandas/"
-
+import os
+import sys
+# Get the parent directory
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+sys.path.insert(0, parent_dir)
 
 class ShredImage:
     def importing_image(self, image_path: str) -> Image:
-        global pwd_path
         try:
-            print(image_path)
             test = Image.open(image_path)
-            print("after")
             return test
         except FileNotFoundError:
-            edited_path = pwd_path + image_path
+            edited_path = os.path.join(PICTURES_PATH, image_path)
             try:
-                print(image_path)
                 test = Image.open(edited_path)
-                print("after")
                 return test
             except:
+                print("importing failure")
                 pass
 
     '''TODO

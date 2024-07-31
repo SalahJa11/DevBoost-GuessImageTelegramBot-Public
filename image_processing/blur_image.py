@@ -28,7 +28,7 @@ class BlurImage(ShredImage):
         return False
     # def simplify_func(self,) -> dict:
 if __name__ == '__main__':
-    test = BlurImage("python_img.png")
+    test = BlurImage("../python_img.png")
     test_image = test.run_func()
     plt.imshow(test_image)
     plt.show()

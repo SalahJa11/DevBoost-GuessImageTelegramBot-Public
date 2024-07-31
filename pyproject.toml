@@ -11,6 +11,7 @@ telebot = "^0.0.5"
 ipython = "^8.26.0"
 pillow = "^10.4.0"
 pymongo = "^4.8.0"
+pytest = "^8.3.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
