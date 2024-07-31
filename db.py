@@ -15,9 +15,9 @@ class GuessPictureDB:
 
         # self.lists.create_index("chat_id", unique=True)
 
-    def add_chat(self, chat_id, user_id, image_path):
+    def add_chat(self, chat_id, user_id, image_path, hardness, game_type):
         self.chat.update_one({'chat_id': chat_id, 'user_id': user_id}, {
-            '$set': {'image_path': image_path}
+            '$set': {'game_session': {'image_path': image_path, 'hardness': hardness, 'game_type': game_type}}
             # '$inc': {'score': 10}
         }, upsert=True)
 
@@ -26,7 +26,8 @@ class GuessPictureDB:
     #  that related to photo
     def delete_picture(self, chat_id, user_id):
         # self.chat.delete_one({'chat_id': chat_id})
-        self.chat.update_one({'chat_id': chat_id, 'user_id': user_id}, {'$set': {'image_path': ""},
+        self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
+                             {'$set': {'game_session': {'image_path': ""}},
             '$inc': {'score': 10}
         }, upsert=True)
 
@@ -54,6 +55,9 @@ class GuessPictureDB:
             return item
         return None
 
+    def changes_hardness(self, chat_id, user_id, hardness):
+        self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
+                             {'$set': {'game_session': {'hardness': hardness}}})
 
 
     # def get_random_picture_path(self, folder_dir: str) -> str:

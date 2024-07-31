@@ -3,7 +3,9 @@ from pathlib import Path
 from io import BytesIO
 import random
 from db import GuessPictureDB
-
+from blur_image import BlurImage
+from shuffle_image import ShuffleImage
+from mask_image import MaskImage
 
 from PIL import Image
 import PIL
@@ -11,6 +13,12 @@ import PIL
 import telebot
 
 import bot_secrets
+
+BLUR = 'blur'
+MASK = 'mask'
+SHUFFLE = 'shuffle'
+
+
 
 logging.basicConfig(
     format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
@@ -48,17 +56,25 @@ def start_game(message: telebot.types.Message):
     files = list(Path("pictures/").glob("*.jpg"))
     logger.info(f"test: {files}")
     random_image = db_guesser.get_random_image()
-    im: PIL.Image = Image.open(random_image['image_path'])
-    im2 = im.resize((200, 200))
+    # im: PIL.Image = Image.open(random_image['image_path'])
+    # im2 = im.resize((200, 200))
     # im2 = im2.rotate(90)
-    bio = BytesIO()
-    bio.name = 'image.jpeg'
-    photo_name = (im.filename.split('\\')[-1]).split('.')[0]
-    db_guesser.add_chat(chat_id, user_id, random_image['image_path'])
-    logger.info(f"name of image: {photo_name}")
-    im2.save(bio, 'JPEG')
-    bio.seek(0)
-    bot.send_photo(chat_id, photo=bio)
+    # bio = BytesIO()
+    # bio.name = 'image.jpeg'
+    blur_image = BlurImage(random_image['image_path'])
+    shuffle_image = ShuffleImage(random_image['image_path'])
+    mask_image = MaskImage(random_image['image_path'])
+
+    db_guesser.add_chat(chat_id, user_id, random_image['image_path'], blur_image.hardness_index,BLUR)
+    # photo_name = (im.filename.split('\\')[-1]).split('.')[0]
+    # logger.info(f"name of image: {photo_name}")
+    # im2.save(bio, 'JPEG')
+    # blur = blur_image(random_image['image_path'])
+
+    # bio.seek(0)
+    print(blur_image.run_func())
+    bot.send_photo(chat_id, blur_image.run_func())
+    # bot.send_photo(chat_id, photo=bio)
 
     # bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'))
 
@@ -92,15 +108,40 @@ def check_guess(message: telebot.types.Message):
     logger.info(f"the guess is: {guess}, it was made by: {guesser_first_name}")
     logger.info(message.from_user)
     bot.send_message(chat_id, f"NOT correct, try again {guesser_first_name}")
-
+def object_start(type:str, image_path: str):
+    if type == BLUR:
+        return BlurImage(image_path)
+    elif type == SHUFFLE:
+        return ShuffleImage(image_path)
+    elif type == MASK:
+        return MaskImage(image_path)
 @bot.message_handler(commands=['hint'])
 def request_hint(message: telebot.types.Message):
     chat_id = message.chat.id
+    user_id = message.from_user.id
+    game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
 
-    game_session = True
-    if not game_session:
-        bot.send_message(chat_id, "there has to be an ongoing game to use this command")
-        return
+    print(game_session)
+
+    new_obj = object_start(game_session["game_type"], game_session["image_path"])
+    new_obj.hardness_index = game_session["hardness"]
+    if new_obj.make_easier():
+        new_image = new_obj.run_func()
+        db_guesser.changes_hardness(chat_id, user_id, new_obj.hardness_index)
+        bot.send_photo(chat_id, new_image)
+    else:
+        logger.info("it cant be easier")
+
+
+    # db_guesser.changes_hardness(chat_id, user_id, blur_image.hardness_index)
+
+
+
+
+    # game_session = True
+    # if not game_session:
+    #     bot.send_message(chat_id, "there has to be an ongoing game to use this command")
+    #     return
     # bot.send_photo(chat_id, photo=open('kitty.jpg', 'rb'), caption="there is your hint")
 
 
