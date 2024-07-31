@@ -4,10 +4,10 @@
 # import mask_image
 # import shuftle_image
 # import numpy as np
+import os
 from PIL import Image
-
-pwd_path = "/Users/saldevfree/PycharmProjects/pythonProject/devboost1-telegram-bot-hackathon-cute-pandas/"
-
+from my_globals import PICTURES_PATH
+pwd_path = os.path.abspath("pictures/")
 
 class ShredImage:
     def importing_image(self, image_path: str) -> Image:
@@ -18,7 +18,7 @@ class ShredImage:
             print("after")
             return test
         except FileNotFoundError:
-            edited_path = pwd_path + image_path
+            edited_path = os.path.join(PICTURES_PATH, image_path)
             try:
                 print(image_path)
                 test = Image.open(edited_path)
