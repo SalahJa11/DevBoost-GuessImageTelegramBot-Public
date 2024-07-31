@@ -100,6 +100,7 @@ def handle_callback_query(call):
     elif call.data == 'button3':
         bot.send_photo(chat_id, shuffle_image.run_func())
         db_guesser.add_chat(chat_id, user_id, random_image['image_path'], shuffle_image.hardness_index, SHUFFLE)
+    bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
 
 
 
