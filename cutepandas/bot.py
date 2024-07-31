@@ -1,5 +1,7 @@
 import logging
 from pathlib import Path
+
+from cutepandas.image_processing import image_factory
 from db import GuessPictureDB
 from image_processing.blur_image import BlurImage
 from image_processing.shuffle_image import ShuffleImage
@@ -9,10 +11,6 @@ import telebot
 from telebot import types
 
 import bot_secrets
-
-BLUR = 'blur'
-MASK = 'mask'
-SHUFFLE = 'shuffle'
 
 logging.basicConfig(
     format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
@@ -50,9 +48,9 @@ def start_game(message: telebot.types.Message):
     # files = list(Path("pictures/").glob("*.jpg"))
 
     keyboard = types.InlineKeyboardMarkup(row_width=1)
-    button1 = types.InlineKeyboardButton("Blur Image", callback_data= 'button1')
-    button2 = types.InlineKeyboardButton("Mask Image", callback_data= 'button2')
-    button3 = types.InlineKeyboardButton("Shuffle Image", callback_data= 'button3')
+    button1 = types.InlineKeyboardButton("Blur Image", callback_data= str(image_factory.Images.BLUR_IMAGE.value))
+    button2 = types.InlineKeyboardButton("Mask Image", callback_data= str(image_factory.Images.MASK_IMAGE.value))
+    button3 = types.InlineKeyboardButton("Shuffle Image", callback_data= str(image_factory.Images.SHUFFLE_IMAGE.value))
     keyboard.add(button1, button2, button3)
 
     bot.send_message(message.chat.id, "choose an option: ", reply_markup=keyboard)
@@ -91,15 +89,19 @@ def handle_callback_query(call):
     shuffle_image = ShuffleImage(random_image['image_path'])
     mask_image = MaskImage(random_image['image_path'])
 
-    if call.data == 'button1':
-        db_guesser.add_chat(chat_id, user_id, random_image['image_path'], blur_image.hardness_index, BLUR)
-        bot.send_photo(chat_id, blur_image.run_func())
-    elif call.data == 'button2':
-        db_guesser.add_chat(chat_id, user_id, random_image['image_path'], mask_image.hardness_index, MASK)
-        bot.send_photo(chat_id, mask_image.run_func())
-    elif call.data == 'button3':
-        bot.send_photo(chat_id, shuffle_image.run_func())
-        db_guesser.add_chat(chat_id, user_id, random_image['image_path'], shuffle_image.hardness_index, SHUFFLE)
+    choice = int(call.data)
+    hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
+    # if call.data == 'button1':
+    #     db_guesser.add_chat(chat_id, user_id, random_image['image_path'], blur_image.hardness_index, BLUR)
+    #     bot.send_photo(chat_id, blur_image.run_func())
+    # elif call.data == 'button2':
+    #     db_guesser.add_chat(chat_id, user_id, random_image['image_path'], mask_image.hardness_index, MASK)
+    #     bot.send_photo(chat_id, mask_image.run_func())
+    # elif call.data == 'button3':
+    #     bot.send_photo(chat_id, shuffle_image.run_func())
+    #     db_guesser.add_chat(chat_id, user_id, random_image['image_path'], shuffle_image.hardness_index, SHUFFLE)
+    db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
+    bot.send_photo(chat_id, hidden_image.run_func())
     bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
 
 
@@ -135,15 +137,6 @@ def check_guess(message: telebot.types.Message):
     bot.send_message(chat_id, f"NOT correct, try again {guesser_first_name}")
 
 
-def object_start(type: str, image_path: str):
-    if type == BLUR:
-        return BlurImage(image_path)
-    elif type == SHUFFLE:
-        return ShuffleImage(image_path)
-    elif type == MASK:
-        return MaskImage(image_path)
-
-
 @bot.message_handler(commands=['hint'])
 def request_hint(message: telebot.types.Message):
     chat_id = message.chat.id
@@ -152,7 +145,7 @@ def request_hint(message: telebot.types.Message):
 
     print(game_session)
 
-    new_obj = object_start(game_session["game_type"], game_session["image_path"])
+    new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
     new_obj.hardness_index = game_session["hardness"]
     if new_obj.make_easier():
         new_image = new_obj.run_func()
