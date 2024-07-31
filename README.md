@@ -20,7 +20,7 @@ You can play alone or to add this bot to your group and play with friends. Just 
 
 ## Instructions for Developers 
 ### Prerequisites
-- Python 3.11
+- Python 3.12
 - Poetry
 - MongoDB
 
