@@ -67,7 +67,7 @@ class MaskImage(ShredImage):
 
 
 if __name__ == '__main__':
-    test = MaskImage("python_img.png")
+    test = MaskImage("../python_img.png")
     test_image = test.run_func()
     plt.imshow(test_image)
     plt.show()
