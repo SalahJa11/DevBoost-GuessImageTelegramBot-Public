@@ -1,8 +1,8 @@
 from enum import Enum
 
-from image_processing.blur_image import BlurImage
-from image_processing.mask_image import MaskImage
-from image_processing.shuffle_image import ShuffleImage
+from cutepandas.image_processing.blur_image import BlurImage
+from cutepandas.image_processing.mask_image import MaskImage
+from cutepandas.image_processing.shuffle_image import ShuffleImage
 
 
 class Images(Enum):
@@ -10,7 +10,7 @@ class Images(Enum):
     MASK_IMAGE = 2
     BLUR_IMAGE = 3
 
-def image_factory(self, type: Images, image_path: str):
+def image_factory(type: Images, image_path: str):
     if type == Images.BLUR_IMAGE:
         return BlurImage(image_path)
     if type == Images.SHUFFLE_IMAGE:
@@ -20,4 +20,4 @@ def image_factory(self, type: Images, image_path: str):
 
 if __name__ == "__main__":
     print("testing some things here")
-    print(image_factory(Images.MASK_IMAGE, "../pictures/cat.jpg"))
+    print(image_factory(Images(2), "../pictures/cat.jpg"))
