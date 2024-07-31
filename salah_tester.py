@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 
 import blur_image
 import mask_image
-import shuftle_image
+import shuffle_image
 
 if __name__ == '__main__':
     test_path = "python_img.png"
