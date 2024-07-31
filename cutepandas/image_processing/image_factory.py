@@ -6,9 +6,9 @@ from cutepandas.image_processing.shuffle_image import ShuffleImage
 
 
 class Images(Enum):
-    SHUFFLE_IMAGE = 1
-    MASK_IMAGE = 2
-    BLUR_IMAGE = 3
+    SHUFFLE_IMAGE = 0
+    MASK_IMAGE = 1
+    BLUR_IMAGE = 2
 
 def image_factory(type: Images, image_path: str):
     if type == Images.BLUR_IMAGE:
