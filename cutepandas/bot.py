@@ -69,8 +69,8 @@ def start_game(message: telebot.types.Message):
 
         choice = random.randint(0,2)
         hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
-        # db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
-        db_guesser.add_session(chat_id, random_image["image_path"], choice, hidden_image.hardness)
+        db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
+        db_guesser.add_session(chat_id, random_image["image_path"], choice, hidden_image.hardness_index)
         bot.send_photo(chat_id, hidden_image.run_func(), caption="Guess the image!")
 
 
@@ -192,6 +192,8 @@ def process_hint_request(chat_id: int, user_id: int):
 
     new_obj = image_factory.image_factory(image_factory.Images(chat_session["game_type"]), chat_session["image_path"])
     new_obj.hardness_index = chat_session["hardness"]
+    logger.info(f"object is: {new_obj}")
+    logger.info(f"hardness index is: {new_obj.hardness_index}")
     if new_obj.make_easier():
         new_image = new_obj.run_func()
         db_guesser.update_session_hardness(chat_id, new_obj.hardness_index)
