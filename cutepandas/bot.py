@@ -69,13 +69,9 @@ def start_game(message: telebot.types.Message):
 
         choice = random.randint(0,2)
         hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
-        db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
+        # db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
+        db_guesser.add_session(chat_id, random_image["image_path"], choice, hidden_image.hardness)
         bot.send_photo(chat_id, hidden_image.run_func(), caption="Guess the image!")
-
-
-
-
-
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "hint")
@@ -89,24 +85,6 @@ def handle_hint_button(call):
         keyboard.add(button1)
         bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
 
-    # game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
-    #
-    # logger.info(game_session)
-    #
-    # new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
-    # new_obj.hardness_index = game_session["hardness"]
-    # if new_obj.make_easier():
-    #     new_image = new_obj.run_func()
-    #     db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
-    #                                 new_obj.hardness_index)
-    #     bot.send_photo(chat_id, new_image)
-    # else:
-    #     bot.send_message(chat_id, "It can't be easier")
-    #     logger.info("it cant be easier")
-    #     return
-
-
-
 @bot.callback_query_handler(func=lambda call: call.data in "012")
 def handle_callback_query(call):
     chat_id = call.message.chat.id
@@ -116,11 +94,14 @@ def handle_callback_query(call):
     visited = current_chat["visited"] if "visited" in current_chat else []
     print(f"visited images: {visited}")
     random_image = db_guesser.get_random_image(visited)
+    # if random_image is None:
+    #     db_guesser.add_visited_to_chat()
     print(f"random image i got is: {random_image}")
 
     choice = int(call.data)
     hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
-    db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
+    # db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
+    db_guesser.add_session(chat_id, random_image["image_path"], choice, hidden_image.hardness_index)
     bot.send_photo(chat_id, hidden_image.run_func())
     bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
 
@@ -128,8 +109,6 @@ def handle_callback_query(call):
     button1 = types.InlineKeyboardButton("Hint!!", callback_data='hint')
     keyboard.add(button1)
     bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
-
-
 
     visited.append(random_image['image_path'])
     db_guesser.add_visited_to_chat(chat_id, visited)
@@ -141,7 +120,7 @@ def check_guess(message: telebot.types.Message):
     guesser_id = message.from_user.id
     guesser_first_name = message.from_user.first_name
 
-    if not check_session(db_guesser.find_one_chat(chat_id)):
+    if not check_session(db_guesser.find_session(chat_id)):
         return
 
     if message.chat.type == 'private':
@@ -157,7 +136,8 @@ def check_guess(message: telebot.types.Message):
         return
     if guess in correct_answers or spell(guess) in correct_answers:
         logger.info("Correct Answer")
-        db_guesser.delete_picture(chat_id, guesser_id)
+        # db_guesser.delete_picture(chat_id, guesser_id)
+        db_guesser.remove_session(chat_id)
         bot.send_message(chat_id, f"Correct Guess, Do you want another picture, write /play {guesser_first_name}?")
     else:
         bot.send_message(chat_id, f"NOT correct, try again {guesser_first_name}, if you need a hint click /hint")
@@ -181,21 +161,6 @@ def request_hint(message: telebot.types.Message):
     user_id = message.from_user.id
 
     process_hint_request(chat_id, user_id)
-    # game_session = db_guesser.chat.find_one({'chat_id': chat_id, 'user_id': user_id})['game_session']
-    #
-    # print(game_session)
-    #
-    # new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
-    # new_obj.hardness_index = game_session["hardness"]
-    # if new_obj.make_easier():
-    #     new_image = new_obj.run_func()
-    #     db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
-    #                                 new_obj.hardness_index)
-    #     bot.send_photo(chat_id, new_image)
-    # else:
-    #     bot.send_message(chat_id, "It can't be easier")
-    #     logger.info("it cant be easier")
-
 
 @bot.message_handler(func=lambda message: True)
 def nothing(message: telebot.types.Message):
@@ -212,36 +177,33 @@ def nothing(message: telebot.types.Message):
             request_hint(message)
         else:
             check_guess(message)
-def check_session(chat_doc):
-    if chat_doc is None:
-        logger.error("the chat isn't in the database, probably an error")
+def check_session(session_doc):
+    if session_doc is None:
+        logger.info("there is no ongoing session for this chat")
         return False
-    session = chat_doc["game_session"] if "game_session" in chat_doc else {}
-    return session
+    return True
 
 def process_hint_request(chat_id: int, user_id: int):
 
-    current_chat = db_guesser.find_one_chat(chat_id)
-    logger.info(current_chat)
-    if not check_session(current_chat):
-        logger.info("session doesn't exist or empty")
+    chat_session = db_guesser.find_session(chat_id)
+    logger.info(chat_session)
+    if not check_session(chat_session):
         return False
-    game_session = current_chat["game_session"]
 
-    new_obj = image_factory.image_factory(image_factory.Images(game_session["game_type"]), game_session["image_path"])
-    new_obj.hardness_index = game_session["hardness"]
+    new_obj = image_factory.image_factory(image_factory.Images(chat_session["game_type"]), chat_session["image_path"])
+    new_obj.hardness_index = chat_session["hardness"]
     if new_obj.make_easier():
         new_image = new_obj.run_func()
-        db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
-                                    new_obj.hardness_index)
+        db_guesser.update_session_hardness(chat_id, new_obj.hardness_index)
+        # db_guesser.changes_hardness(chat_id, user_id, game_session['image_path'], game_session['game_type'],
+        #                             new_obj.hardness_index)
         bot.send_photo(chat_id, new_image)
     else:
         bot.send_message(chat_id, "It can't be easier")
         logger.info("it cant be easier")
+        return False
 
     return True
-
-
 
 logger.info("* Start polling...")
 bot.infinity_polling()

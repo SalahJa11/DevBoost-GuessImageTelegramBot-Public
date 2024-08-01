@@ -10,8 +10,10 @@ class GuessPictureDB:
         self.db = self.client.get_database("Guess_picture_bot")
         self.chat = self.db.get_collection("chat")
         self.pictures = self.db.get_collection("Pictures")
+        self.sessions = self.db.get_collection("Sessions")
         self.chat.create_index('chat_id')
         self.pictures.create_index('image_path')
+        self.sessions.create_index('chat_id')
 
         # self.lists.create_index("chat_id", unique=True)
 
@@ -44,7 +46,8 @@ class GuessPictureDB:
         }, upsert=True)
 
     def get_name(self, chat_id):
-        ret = self.chat.find_one({'chat_id': chat_id})['game_session']['image_path']
+        # ret = self.chat.find_one({'chat_id': chat_id})['game_session']['image_path']
+        ret = self.find_session(chat_id)["image_path"]
         return self.pictures.find_one({'image_path': ret})['synonyms'] if ret is not None else None
 
     def add_pictures(self, data_file):
@@ -71,6 +74,18 @@ class GuessPictureDB:
         self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
                              {'$set': {'game_session': {'image_path': image_path, 'game_type': game_type,
                                                         'hardness': hardness}}})
+
+    def add_session(self, chat_id: int, image_path: str, game_type, hardness):
+        self.sessions.update_one({'chat_id' : chat_id}, {'$set' : {'chat_id' : chat_id, 'image_path' : image_path, 'game_type' : game_type, 'hardness' : hardness}}, upsert=True)
+
+    def update_session_hardness(self, chat_id: int, hardness):
+        self.sessions.update_one({'chat_id' : chat_id}, {'$set' : {'hardness' : hardness}})
+
+    def find_session(self, chat_id: int):
+        return self.sessions.find_one({'chat_id' : chat_id})
+
+    def remove_session(self, chat_id: int):
+        self.sessions.delete_one({'chat_id' : chat_id})
 
 
     # def get_random_picture_path(self, folder_dir: str) -> str:
