@@ -11,7 +11,7 @@ The difficulty is that the picture is shown either partially or blurred or shuff
 If the player guesses correctly, he wins and earns a plus to his player rating.
 It is possible to ask for a hint :)
 
-🔗 Here is the link to add bot: @devBoost_Kate_bot
+🔗 Here is the link to add bot: @devBoost_Kate_bot. Or scan QR code: ![telegram-cloud-photo-size-2-5285110047350840748-x](https://github.com/user-attachments/assets/5784f179-a77d-495d-a07f-d4312227c9e1)
 
 You can play alone but it's more fun to play with friends in group. Just need to make it admin. 
 
