@@ -25,7 +25,9 @@ spell = Speller(lang='en')
 @bot.message_handler(commands=['help', 'start'])
 def display_help(message: telebot.types.Message):
     chat_id = message.chat.id
+    user_id = message.from_user.id
     username = message.from_user.username
+    update_user(chat_id, user_id)
     logger.info(f"> Start chat #{chat_id}. username: {username}")
     response = """
 This is a guess the image game.
@@ -44,9 +46,7 @@ To request a hint type /hint
 def start_game(message: telebot.types.Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
-
-    # enter the chat to the db
-    db_guesser.add_empty_chat(chat_id, user_id)
+    update_user(chat_id, user_id)
 
     if message.chat.type == 'private':
         keyboard = types.InlineKeyboardMarkup(row_width=1)
@@ -69,7 +69,6 @@ def start_game(message: telebot.types.Message):
 
         choice = random.randint(0,2)
         hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
-        db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
         db_guesser.add_session(chat_id, random_image["image_path"], choice, hidden_image.hardness_index)
         bot.send_photo(chat_id, hidden_image.run_func(), caption="Guess the image!")
 
@@ -78,6 +77,7 @@ def start_game(message: telebot.types.Message):
 def handle_hint_button(call):
     chat_id = call.message.chat.id
     user_id = call.from_user.id
+    update_user(chat_id, user_id)
     if process_hint_request(chat_id, user_id):
         bot.edit_message_text("Guess the image:", chat_id=chat_id, message_id=call.message.id, reply_markup=None)
         keyboard = types.InlineKeyboardMarkup(row_width=1)
@@ -120,6 +120,8 @@ def check_guess(message: telebot.types.Message):
     guesser_id = message.from_user.id
     guesser_first_name = message.from_user.first_name
 
+    update_user(chat_id, guesser_id)
+
     if not check_session(db_guesser.find_session(chat_id)):
         return
 
@@ -136,7 +138,7 @@ def check_guess(message: telebot.types.Message):
         return
     if guess in correct_answers or spell(guess) in correct_answers:
         logger.info("Correct Answer")
-        # db_guesser.delete_picture(chat_id, guesser_id)
+        db_guesser.update_score(chat_id, guesser_id)
         db_guesser.remove_session(chat_id)
         bot.send_message(chat_id, f"Correct Guess, Do you want another picture, write /play {guesser_first_name}?")
     else:
@@ -190,6 +192,7 @@ def process_hint_request(chat_id: int, user_id: int):
 
     chat_session = db_guesser.find_session(chat_id)
     logger.info(chat_session)
+    update_user(chat_id, user_id)
     if not check_session(chat_session):
         return False
 
@@ -209,6 +212,9 @@ def process_hint_request(chat_id: int, user_id: int):
         return False
 
     return True
+
+def update_user(chat_id, user_id):
+    db_guesser.add_chat(chat_id, user_id)
 
 logger.info("* Start polling...")
 bot.infinity_polling()
