@@ -18,8 +18,15 @@ It is possible to ask for a hint :)
 
 You can play alone but it's more fun to play with friends in group. Just need to make it admin. 
 
-Here is some screenshots:
+Here is some screenshots, can you identify these objects? 
+
 ![telegram-cloud-photo-size-2-5285387918849989212-m](https://github.com/user-attachments/assets/c813094d-6e8a-42bf-9955-434be53f5c51)
+
+![telegram-cloud-photo-size-2-5285387918849989239-m](https://github.com/user-attachments/assets/ba944a1b-035d-4ad1-85c4-ac0d407d77f3)
+
+![telegram-cloud-photo-size-2-5285387918849989244-m](https://github.com/user-attachments/assets/469b4fbc-104e-40fa-b873-fc76ff7da0ae)
+
+Enjoy and please send your feedback to cutepandas@gmail.com ✉️
 
 ## Instructions for Developers 
 ### Prerequisites
