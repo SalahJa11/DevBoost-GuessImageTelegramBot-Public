@@ -1,10 +1,7 @@
 # 🚀 Guess image game bot
 
 ## The Team -- group #5
-### - 💡 Ofir
-### - 💡 Adam
-### - 💡 Salah
-### - 💡 Kateryna
+### - 💡 Ofir    💡 Adam    💡 Salah    💡 Kateryna
 
 ## About guess image game bot
 
