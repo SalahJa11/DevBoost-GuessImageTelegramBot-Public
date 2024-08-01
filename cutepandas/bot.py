@@ -151,6 +151,9 @@ def check_guess(message: telebot.types.Message):
 @bot.message_handler(commands=['end'])
 def end_game(message: telebot.types.Message):
     ob = db_guesser.chat.find_one({"chat_id": message.chat.id, "user_id": message.from_user.id})
+    if ob is None:
+        bot.send_message(message.chat.id, f"you are not part of the game")
+        return
     print(f"chat id {message.chat.id}     user id {message.from_user.id}")
     print(ob)
     score = ob["score"]
