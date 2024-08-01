@@ -62,6 +62,11 @@ def start_game(message: telebot.types.Message):
         visited = current_chat["visited"] if "visited" in current_chat else []
         print(f"visited images: {visited}")
         random_image = db_guesser.get_random_image(visited)
+        if not random_image:
+            print("got none image")
+            db_guesser.empty_visited(chat_id, user_id)
+            visited = []
+            random_image = db_guesser.get_random_image(visited)
         print(f"random image i got is: {random_image}")
 
         visited.append(random_image['image_path'])
@@ -94,6 +99,11 @@ def handle_callback_query(call):
     visited = current_chat["visited"] if "visited" in current_chat else []
     print(f"visited images: {visited}")
     random_image = db_guesser.get_random_image(visited)
+    if not random_image:
+        print("got none image")
+        db_guesser.empty_visited(chat_id, user_id)
+        visited = []
+        random_image = db_guesser.get_random_image(visited)
     # if random_image is None:
     #     db_guesser.add_visited_to_chat()
     print(f"random image i got is: {random_image}")

@@ -60,6 +60,8 @@ class GuessPictureDB:
     # maybe I want the bot to add score by number! without guessing
     def set_score(self):
         ...
+    def empty_visited(self, chat_id, user_id):
+        self.chat.update_one({'chat_id' : chat_id, 'user_id' : user_id}, {'$set' : {'visited' : []}})
 
     def get_random_image(self, visited=[]):
         for item in self.pictures.aggregate([{ '$match': { 'image_path': { '$nin' : visited}}},{'$sample': {'size': 1}}]):
