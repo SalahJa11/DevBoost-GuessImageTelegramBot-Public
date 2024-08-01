@@ -33,11 +33,16 @@ def display_help(message: telebot.types.Message):
 This is a guess the image game.
 The bot will send an image and the users will have to guess what's in the image.
 Commands:
-for instructions type /help
-To start the game type /play
+/help - Display instructions. 
+/play - Starts the game showing an image to guess.
+/score , /end - Displays the player's score. 
 Commands during game:
-To submit a guess type /guess <your_answer>
-To request a hint type /hint 
+/guess <your_answer> - Submit a guess.
+/hint - Request a hint.
+In private chat:
+You can write play without the /. 
+You can use /guess <word> without /guess only <word> 
+
 """
     bot.send_message(chat_id, response)
 
@@ -160,7 +165,7 @@ def check_guess(message: telebot.types.Message):
     # if message.text == 'hint':
     #     return
 
-@bot.message_handler(commands=['end'])
+@bot.message_handler(commands=['end', 'score'])
 def end_game(message: telebot.types.Message):
     ob = db_guesser.chat.find_one({"chat_id": message.chat.id, "user_id": message.from_user.id})
     if ob is None:
