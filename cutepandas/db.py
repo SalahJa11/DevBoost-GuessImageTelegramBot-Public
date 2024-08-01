@@ -17,11 +17,9 @@ class GuessPictureDB:
 
         # self.lists.create_index("chat_id", unique=True)
 
-    def add_chat(self, chat_id, user_id, image_path, hardness, game_type, score = 0):
+    def add_chat(self, chat_id, user_id, score = 0):
         self.chat.update_one({'chat_id': chat_id, 'user_id': user_id}, {
-            '$set': {'game_session': {'image_path': image_path, 'hardness': hardness, 'game_type': game_type
-                                      }, 'score' : score}
-            # '$inc': {'score': 10}
+            '$set': {}
         }, upsert=True)
 
     def add_empty_chat(self, chat_id, user_id):
@@ -38,11 +36,9 @@ class GuessPictureDB:
 # Todo : It's not update the increment because i delete and create another one, also I update
     #  on it without score in add_chat maybe i should create another table with score or just delete field
     #  that related to photo
-    def delete_picture(self, chat_id, user_id):
-        # self.chat.delete_one({'chat_id': chat_id})
-        self.chat.update_many({'chat_id': chat_id},
-                             {'$set': {'game_session': {}, },
-            '$inc': {'score': 10}
+    def update_score(self, chat_id, user_id):
+        self.chat.update_one({'chat_id': chat_id, 'user_id' : user_id},
+                             {'$inc': {'score': 10}
         }, upsert=True)
 
     def get_name(self, chat_id):

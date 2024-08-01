@@ -158,7 +158,7 @@ def end_game(message: telebot.types.Message):
         return
     print(f"chat id {message.chat.id}     user id {message.from_user.id}")
     print(ob)
-    score = ob["score"]
+    score = ob["score"] if "score" in ob else 0
     bot.send_message(message.chat.id, f"Your score is {score}")
 @bot.message_handler(commands=['hint'])
 def request_hint(message: telebot.types.Message):
