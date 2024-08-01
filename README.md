@@ -1,6 +1,6 @@
 # 🚀 Guess image game bot
 
-## The Team -- group #5
+## Team #5 -- CUTE PANDAS
 ### - 💡 Ofir    💡 Adam    💡 Salah    💡 Kateryna
 
 ## About guess image game bot
