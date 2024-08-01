@@ -117,6 +117,7 @@ def handle_callback_query(call):
 
     choice = int(call.data)
     hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
+    logger.info(hidden_image)
     # db_guesser.add_chat(chat_id, user_id, random_image['image_path'], hidden_image.hardness_index, choice)
     db_guesser.add_session(chat_id, random_image["image_path"], choice, hidden_image.hardness_index)
     bot.send_photo(chat_id, hidden_image.run_func())
