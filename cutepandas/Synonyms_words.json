@@ -1,89 +1,165 @@
 {
   "pictures/plane.jpg": [
     "aircraft",
-      "airplane",
-      "jet",
-      "aero",
-      "flying machine",
-      "airliner",
-      "plane"
-    ],
-
-   "pictures/cat.jpg":[
-      "feline",
-      "kitty",
-      "pussycat",
-      "tomcat",
-      "kitten",
+    "airplane",
+    "jet",
+    "aero",
+    "flying machine",
+    "airliner",
+    "plane",
+    "✈\uFE0F "
+  ],
+  "pictures/cat.jpg": [
+    "feline",
+    "kitty",
+    "pussycat",
+    "tomcat",
+    "kitten",
     "slang/colloquial",
-      "tabby",
-      "purr machine",
-      "furball",
-     "cat"
-    ],
-
+    "tabby",
+    "purr machine",
+    "furball",
+    "cat",
+    "\uD83D\uDC08",
+    "\uD83D\uDC08\u200D⬛",
+    ""
+  ],
   "pictures/flower.jpg": [
-      "blossom",
-      "bloom",
-      "petal",
-      "bud",
-      "inflorescence",
-      "plant",
-      "rose",
-      "bloom",
-      "petal",
-      "floral",
-      "flower"
-    ],
+    "blossom",
+    "bloom",
+    "petal",
+    "bud",
+    "inflorescence",
+    "plant",
+    "rose",
+    "bloom",
+    "petal",
+    "floral",
+    "flower",
+    "\uD83C\uDF38",
+    "\uD83C\uDF3A",
+    "\uD83C\uDF39",
+    "\uD83C\uDF37"
+  ],
   "pictures/car.jpeg": [
-      "automobile",
-      "vehicle",
-      "motorcar",
-      "auto",
-      "machine",
-      "car",
-      "public transport"
-    ],
+    "automobile",
+    "vehicle",
+    "motorcar",
+    "auto",
+    "machine",
+    "car",
+    "public transport",
+    "\uD83D\uDE97",
+    "\uD83D\uDE98",
+    "\uD83D\uDE99"
+  ],
   "pictures/bow.jpeg": [
-      "bow",
-      "yellow bow"
-    ],
+    "bow",
+    "yellow bow"
+  ],
   "pictures/jackie_chan.jpeg": [
-      "actor",
-      "jackie chan"
-    ],
+    "actor",
+    "jackie chan"
+  ],
   "pictures/laptop.jpeg": [
-      "laptop",
-      "macbook"
-    ],
+    "laptop",
+    "macbook",
+    "\uD83D\uDCBB"
+  ],
   "pictures/map.jpeg": [
-      "map",
-      "worldmap"
-    ],
+    "map",
+    "worldmap",
+    "\uD83D\uDDFA\uFE0F"
+  ],
   "pictures/mouse.jpeg": [
-      "mouse",
-      "animal"
-    ],
+    "mouse",
+    "animal",
+    "\uD83D\uDC01",
+    "\uD83D\uDC2D "
+  ],
   "pictures/mouse2.jpeg": [
-      "mouse",
-      "wired mouse"
-    ],
+    "mouse",
+    "wired mouse",
+    "\uD83D\uDDB1\uFE0F"
+  ],
   "pictures/panda.jpeg": [
-      "panda",
-      "panda bear"
-    ],
+    "panda",
+    "panda bear",
+    "\uD83D\uDC3C"
+  ],
   "pictures/sunset.jpeg": [
-      "sunset",
-      "evening sun"
-    ],
+    "sunset",
+    "evening sun",
+    "\uD83C\uDF05"
+  ],
   "pictures/train.jpeg": [
-      "train",
-      "transport"
-    ],
+    "train",
+    "transport",
+    "locomotive",
+    "\uD83D\uDE86",
+    "\uD83D\uDE82",
+    "\uD83D\uDE8A"
+  ],
   "pictures/windmill.jpeg": [
-      "windmill",
-      "mill"
-    ]
+    "windmill",
+    "mill"
+  ],
+  "pictures/apple.jpeg": [
+    "apple",
+    "\uD83C\uDF4F",
+    "\uD83C\uDF4E"
+  ],
+  "pictures/bicycle.jpeg": [
+    "bicycle",
+    "\uD83D\uDEB2",
+    "cycly",
+    "velocipede",
+    "two-wheeler"
+  ],
+  "pictures/butterfly.jpeg": [
+    "butterfly",
+    "insect",
+    "\uD83E\uDD8B"
+  ],
+  "pictures/cake.jpeg": [
+    "cake",
+    "\uD83C\uDF70",
+    "\uD83C\uDF82"
+  ],
+  "pictures/house.jpeg": [
+    "house",
+    "\uD83C\uDFE0",
+    "\uD83C\uDFE1"
+  ],
+  "pictures/minecraft.jpeg": [
+    "minecraft"
+  ],
+  "pictures/moon.jpeg": [
+    "moon",
+    "\uD83C\uDF15",
+    "\uD83C\uDF19"
+  ],
+  "pictures/puppy.jpeg": [
+    "puppy",
+    "\uD83D\uDC36",
+    "dog"
+  ],
+  "pictures/rainbow.jpeg": [
+    "rainbow",
+    "\uD83C\uDF08"
+  ],
+  "pictures/sport.jpeg": [
+    "sport",
+    "\uD83C\uDFC3",
+    "\uD83C\uDFC3",
+    "\uD83C\uDFC3\u200D♂\uFE0F"
+  ],
+  "pictures/tree.jpeg": [
+    "tree",
+    "\uD83C\uDF33",
+    "\uD83C\uDF32",
+    "\uD83C\uDF34"
+  ]
 }
 
 
