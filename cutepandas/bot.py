@@ -55,9 +55,10 @@ def start_game(message: telebot.types.Message):
 
     if message.chat.type == 'private':
         keyboard = types.InlineKeyboardMarkup(row_width=1)
-        button1 = types.InlineKeyboardButton("Blur Image", callback_data= str(image_factory.Images.BLUR_IMAGE.value))
-        button2 = types.InlineKeyboardButton("Mask Image", callback_data= str(image_factory.Images.MASK_IMAGE.value))
-        button3 = types.InlineKeyboardButton("Shuffle Image", callback_data= str(image_factory.Images.SHUFFLE_IMAGE.value))
+        button1 = types.InlineKeyboardButton("Blur Image", callback_data=str(image_factory.Images.BLUR_IMAGE.value))
+        button2 = types.InlineKeyboardButton("Mask Image", callback_data=str(image_factory.Images.MASK_IMAGE.value))
+        button3 = types.InlineKeyboardButton("Shuffle Image",
+                                             callback_data=str(image_factory.Images.SHUFFLE_IMAGE.value))
         keyboard.add(button1, button2, button3)
 
         bot.send_message(message.chat.id, "choose an option: ", reply_markup=keyboard)
@@ -77,7 +78,7 @@ def start_game(message: telebot.types.Message):
         visited.append(random_image['image_path'])
         db_guesser.add_visited_to_chat(chat_id, visited)
 
-        choice = random.randint(0,2)
+        choice = random.randint(0, 2)
         hidden_image = image_factory.image_factory(image_factory.Images(choice), random_image['image_path'])
         db_guesser.add_session(chat_id, random_image["image_path"], choice, hidden_image.hardness_index)
         bot.send_photo(chat_id, hidden_image.run_func(), caption="Guess the image!")
@@ -94,6 +95,7 @@ def handle_hint_button(call):
         button1 = types.InlineKeyboardButton("Hint!!", callback_data='hint')
         keyboard.add(button1)
         bot.send_message(chat_id, "Do you need a help?", reply_markup=keyboard)
+
 
 @bot.callback_query_handler(func=lambda call: call.data in "012")
 def handle_callback_query(call):
@@ -165,6 +167,7 @@ def check_guess(message: telebot.types.Message):
     # if message.text == 'hint':
     #     return
 
+
 @bot.message_handler(commands=['end', 'score'])
 def end_game(message: telebot.types.Message):
     ob = db_guesser.chat.find_one({"chat_id": message.chat.id, "user_id": message.from_user.id})
@@ -175,12 +178,15 @@ def end_game(message: telebot.types.Message):
     print(ob)
     score = ob["score"] if "score" in ob else 0
     bot.send_message(message.chat.id, f"Your score is {score}")
+
+
 @bot.message_handler(commands=['hint'])
 def request_hint(message: telebot.types.Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
 
     process_hint_request(chat_id, user_id)
+
 
 @bot.message_handler(func=lambda message: True)
 def nothing(message: telebot.types.Message):
@@ -197,14 +203,16 @@ def nothing(message: telebot.types.Message):
             request_hint(message)
         else:
             check_guess(message)
+
+
 def check_session(session_doc):
     if session_doc is None:
         logger.info("there is no ongoing session for this chat")
         return False
     return True
 
-def process_hint_request(chat_id: int, user_id: int):
 
+def process_hint_request(chat_id: int, user_id: int):
     chat_session = db_guesser.find_session(chat_id)
     logger.info(chat_session)
     update_user(chat_id, user_id)
@@ -228,8 +236,10 @@ def process_hint_request(chat_id: int, user_id: int):
 
     return True
 
+
 def update_user(chat_id, user_id):
     db_guesser.add_chat(chat_id, user_id)
+
 
 logger.info("* Start polling...")
 bot.infinity_polling()

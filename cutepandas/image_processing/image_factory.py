@@ -10,6 +10,7 @@ class Images(Enum):
     MASK_IMAGE = 1
     BLUR_IMAGE = 2
 
+
 def image_factory(type: Images, image_path: str):
     if type == Images.BLUR_IMAGE:
         return BlurImage(image_path)
@@ -17,6 +18,7 @@ def image_factory(type: Images, image_path: str):
         return ShuffleImage(image_path)
     if type == Images.MASK_IMAGE:
         return MaskImage(image_path)
+
 
 if __name__ == "__main__":
     print("testing some things here")

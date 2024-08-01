@@ -17,29 +17,28 @@ class GuessPictureDB:
 
         # self.lists.create_index("chat_id", unique=True)
 
-    def add_chat(self, chat_id, user_id, score = 0):
+    def add_chat(self, chat_id, user_id, score=0):
         self.chat.update_one({'chat_id': chat_id, 'user_id': user_id}, {
             '$set': {}
         }, upsert=True)
 
     def add_empty_chat(self, chat_id, user_id):
-        self.chat.update_one({'chat_id' : chat_id , 'user_id' : user_id}, {'$set' : {}}, upsert=True)
+        self.chat.update_one({'chat_id': chat_id, 'user_id': user_id}, {'$set': {}}, upsert=True)
 
     def add_visited_to_chat(self, chat_id, visited):
-        self.chat.update_one({'chat_id' : chat_id}, {'$set': {'visited' : visited}}
+        self.chat.update_one({'chat_id': chat_id}, {'$set': {'visited': visited}}
                              , upsert=True)
 
     def find_one_chat(self, chat_id):
-        return self.chat.find_one({'chat_id' : chat_id})
+        return self.chat.find_one({'chat_id': chat_id})
 
-
-# Todo : It's not update the increment because i delete and create another one, also I update
+    # Todo : It's not update the increment because i delete and create another one, also I update
     #  on it without score in add_chat maybe i should create another table with score or just delete field
     #  that related to photo
     def update_score(self, chat_id, user_id):
-        self.chat.update_one({'chat_id': chat_id, 'user_id' : user_id},
+        self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
                              {'$inc': {'score': 10}
-        }, upsert=True)
+                              }, upsert=True)
 
     def get_name(self, chat_id):
         # ret = self.chat.find_one({'chat_id': chat_id})['game_session']['image_path']
@@ -60,31 +59,33 @@ class GuessPictureDB:
     # maybe I want the bot to add score by number! without guessing
     def set_score(self):
         ...
+
     def empty_visited(self, chat_id, user_id):
-        self.chat.update_one({'chat_id' : chat_id, 'user_id' : user_id}, {'$set' : {'visited' : []}})
+        self.chat.update_one({'chat_id': chat_id, 'user_id': user_id}, {'$set': {'visited': []}})
 
     def get_random_image(self, visited=[]):
-        for item in self.pictures.aggregate([{ '$match': { 'image_path': { '$nin' : visited}}},{'$sample': {'size': 1}}]):
+        for item in self.pictures.aggregate([{'$match': {'image_path': {'$nin': visited}}}, {'$sample': {'size': 1}}]):
             return item
         return None
 
-    def changes_hardness(self, chat_id, user_id, image_path, game_type,hardness):
+    def changes_hardness(self, chat_id, user_id, image_path, game_type, hardness):
         self.chat.update_one({'chat_id': chat_id, 'user_id': user_id},
                              {'$set': {'game_session': {'image_path': image_path, 'game_type': game_type,
                                                         'hardness': hardness}}})
 
     def add_session(self, chat_id: int, image_path: str, game_type, hardness):
-        self.sessions.update_one({'chat_id' : chat_id}, {'$set' : {'chat_id' : chat_id, 'image_path' : image_path, 'game_type' : game_type, 'hardness' : hardness}}, upsert=True)
+        self.sessions.update_one({'chat_id': chat_id}, {
+            '$set': {'chat_id': chat_id, 'image_path': image_path, 'game_type': game_type, 'hardness': hardness}},
+                                 upsert=True)
 
     def update_session_hardness(self, chat_id: int, hardness):
-        self.sessions.update_one({'chat_id' : chat_id}, {'$set' : {'hardness' : hardness}})
+        self.sessions.update_one({'chat_id': chat_id}, {'$set': {'hardness': hardness}})
 
     def find_session(self, chat_id: int):
-        return self.sessions.find_one({'chat_id' : chat_id})
+        return self.sessions.find_one({'chat_id': chat_id})
 
     def remove_session(self, chat_id: int):
-        self.sessions.delete_one({'chat_id' : chat_id})
-
+        self.sessions.delete_one({'chat_id': chat_id})
 
     # def get_random_picture_path(self, folder_dir: str) -> str:
     #     picture_files = [

@@ -61,6 +61,7 @@ class ShuffleImage(ShredImage):
             return True
         return False
 
+
 if __name__ == '__main__':
     test = ShuffleImage("../python_img.png")
     test_image = test.run_func()

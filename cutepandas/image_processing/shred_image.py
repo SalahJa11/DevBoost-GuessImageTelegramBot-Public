@@ -10,11 +10,11 @@ from PIL import Image
 import os
 import sys
 
-
 # Get the parent directory
 # parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 # sys.path.insert(0, parent_dir)
 PICTURES_PATH = os.path.abspath(os.getcwd())
+
 
 class ShredImage:
 
@@ -23,7 +23,7 @@ class ShredImage:
             test = Image.open(image_path)
             return test
         except FileNotFoundError:
-            edited_path = os.path.abspath(os.path.join(os.path.dirname(__file__),"..", image_path))
+            edited_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", image_path))
             print(edited_path)
             try:
                 test = Image.open(edited_path)
